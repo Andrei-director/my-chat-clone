@@ -1,6 +1,14 @@
+// ВАЖНО: Никогда не храните ваш настоящий API-ключ в открытом коде на GitHub!
+// Этот ключ ниже - это ЗАГЛУШКА. Для работы нужно настроить БЕЗОПАСНЫЙ прокси.
+//
+// Для ЛОКАЛЬНОГО ТЕСТИРОВАНИЯ (только для себя):
+// const GEMINI_API_KEY = "СЮДА_ВСТАВЬ_ТВОЙ_КЛЮЧ_GEMINI"; 
+// const GEMINI_API_URL = "https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash:generateContent?key=" + GEMINI_API_KEY;
+
 const chatBox = document.getElementById("chat-box");
 const chatForm = document.getElementById("chat-form");
 const userInput = document.getElementById("user-input");
+const CHAT_ENDPOINT = "/api/chat"; // Наш будущий безопасный прокси-адрес
 
 // Функция добавления сообщения в окно
 function addMessage(text, sender) {
@@ -8,7 +16,47 @@ function addMessage(text, sender) {
     msg.classList.add("message", sender);
     msg.textContent = text;
     chatBox.appendChild(msg);
-    chatBox.scrollTop = chatBox.scrollHeight; // прокрутка вниз
+    chatBox.scrollTop = chatBox.scrollHeight;
+}
+
+// Отправка запроса к API
+async function sendToGemini(userText) {
+    // Временно используем заглушку, пока не настроен безопасный прокси
+    addMessage("Connecting to AI...", "bot"); 
+
+    // Здесь должен быть fetch к БЕЗОПАСНОМУ прокси, который спрячет ключ
+    /*
+    try {
+        const response = await fetch(CHAT_ENDPOINT, {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ message: userText })
+        });
+
+        const data = await response.json();
+        
+        // Удаляем "Connecting to AI..."
+        chatBox.lastChild.remove(); 
+        
+        if (data.reply) {
+            addMessage(data.reply, "bot");
+        } else {
+            addMessage("Error: Could not get a reply from AI.", "bot");
+        }
+    } catch (error) {
+        // Удаляем "Connecting to AI..."
+        chatBox.lastChild.remove(); 
+        addMessage("Network Error. Check your proxy setup.", "bot");
+    }
+    */
+    
+    // ВРЕМЕННЫЙ ФЕЙКОВЫЙ ОТВЕТ для демонстрации работы интерфейса:
+    setTimeout(() => {
+        // Удаляем "Connecting to AI..."
+        chatBox.lastChild.remove(); 
+        addMessage(`[AI Reply]: You asked "${userText}". To get a real answer, you need to set up a secure proxy server.`, "bot");
+    }, 1500);
+
 }
 
 // Обработка отправки формы
@@ -22,31 +70,6 @@ chatForm.addEventListener("submit", (e) => {
     addMessage(text, "user");
     userInput.value = "";
 
-    // имитация ответа "бота"
-    setTimeout(() => {
-        const reply = generateBotReply(text);
-        addMessage(reply, "bot");
-    }, 600);
+    // Отправляем сообщение на сервер (или заглушку)
+    sendToGemini(text); 
 });
-
-// Простая логика ответов (можно расширять)
-function generateBotReply(userText) {
-    const msg = userText.toLowerCase();
-
-    if (msg.includes("hello") || msg.includes("hi")) {
-        return "Hi there! 👋 How can I help you today?";
-    } else if (msg.includes("name")) {
-        return "I’m a simple JavaScript chat bot.";
-    } else if (msg.includes("time")) {
-        return "Current time is " + new Date().toLocaleTimeString();
-    } else {
-        const replies = [
-            "Interesting... tell me more!",
-            "I see 🤔",
-            "Can you explain that differently?",
-            "That's cool!",
-            "Let's talk more about it!"
-        ];
-        return replies[Math.floor(Math.random() * replies.length)];
-    }
-}
