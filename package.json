@@ -1,0 +1,10 @@
+{
+  "name": "my-chat-clone",
+  "version": "1.0.0",
+  "description": "A simple chat interface powered by Gemini API on Vercel.",
+  "main": "index.html",
+  "type": "module",
+  "dependencies": {
+    "@google/genai": "^0.15.0"
+  }
+}
