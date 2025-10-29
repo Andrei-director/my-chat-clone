@@ -1,7 +1,7 @@
 // Этот код выполняется на сервере Vercel (безопасно)
 import { GoogleGenAI } from '@google/genai';
 
-// Инициализируем клиента, используя секретный ключ из Vercel Environment Variables
+// Инициализируем клиента, используя секретный ключ
 const ai = new GoogleGenAI({ 
     apiKey: process.env.GEMINI_API_KEY 
 });
@@ -14,17 +14,17 @@ export default async function handler(req, res) {
     }
 
     try {
-        // Принимаем всю историю и новое сообщение
-        const { history, newMessage } = await req.body;
+        // Принимаем только историю
+        const { history } = await req.body;
 
-        if (!history || !newMessage) {
-            res.status(400).json({ error: 'Missing history or message parameter' });
+        if (!history || history.length === 0) {
+            res.status(400).json({ error: 'Missing conversation history' });
             return;
         }
 
         // Форматируем историю для API Gemini
         const contents = history.map(item => ({
-            // Роли должны быть 'user' или 'model'
+            // API требует, чтобы роль была 'user' или 'model'
             role: item.role, 
             parts: [{ text: item.text }]
         }));
@@ -32,18 +32,18 @@ export default async function handler(req, res) {
         // Отправляем запрос в Gemini
         const response = await ai.models.generateContent({
             model: 'gemini-2.5-flash',
-            // Отправляем ВСЮ историю
-            contents: contents, 
+            contents: contents, // Отправляем ВСЮ историю
         });
 
-        // Получаем текстовый ответ
         const replyText = response.text;
-
-        // Отправляем ответ обратно клиенту (на твой сайт)
         res.status(200).json({ reply: replyText });
 
     } catch (error) {
         console.error('Gemini API Error:', error);
-        res.status(500).json({ error: 'Internal Server Error during AI request' });
+        // Если ошибка API, вернем ее в ответ для лучшей диагностики
+        res.status(500).json({ 
+            error: 'Internal Server Error during AI request',
+            details: error.message 
+        });
     }
 }
