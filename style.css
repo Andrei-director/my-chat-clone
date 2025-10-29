@@ -116,7 +116,22 @@ input[type="text"]:focus {
 }
 
 button {
-    display: none; /* Убираем кнопку "Send" для дизайна, как в видео */
+    background: #0b84ff; /* Яркий голубой цвет */
+    color: white;
+    border: none;
+    padding: 10px 16px;
+    margin-left: 10px; /* Отступ от поля ввода */
+    border-radius: 25px; /* Очень скругленные углы */
+    cursor: pointer;
+    font-weight: bold;
+    font-size: 15px;
+    width: auto; /* Позволяем кнопке быть нужной ширины */
+    transition: background 0.2s;
+    /* Убрано: display: none; */
+}
+
+button:hover {
+    background: #006ee6; /* Немного темнее при наведении */
 }
 
 /* Адаптивность для меньших экранов */
